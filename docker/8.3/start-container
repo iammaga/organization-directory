@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ ! -z "$WWWGROUP" ]; then
+    usermod -g $WWWGROUP sail
+fi
+
+if [ ! -z "$WWWUSER" ]; then
+    usermod -u $WWWUSER sail
+fi
+
+chown -R sail:sail /var/www/html
+
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

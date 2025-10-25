@@ -1,0 +1,412 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Organization Directory API Documentation",
+        "description": "API documentation for the Organization Directory project",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "Organization Directory API Server"
+        }
+    ],
+    "paths": {
+        "/activities/{activity}/organizations": {
+            "get": {
+                "tags": [
+                    "Activities"
+                ],
+                "summary": "Get organizations by activity",
+                "operationId": "f95a86dcd6fd52251db6139d68ff2493",
+                "parameters": [
+                    {
+                        "name": "activity",
+                        "in": "path",
+                        "description": "ID of the activity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrganizationResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/buildings": {
+            "get": {
+                "tags": [
+                    "Buildings"
+                ],
+                "summary": "Get all buildings",
+                "operationId": "60cc2510e686d245d04a0768d7afc247",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BuildingResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/buildings/{building}/organizations": {
+            "get": {
+                "tags": [
+                    "Buildings"
+                ],
+                "summary": "Get organizations by building",
+                "operationId": "d178fbc8a0b8a205ff1febc630f9aaad",
+                "parameters": [
+                    {
+                        "name": "building",
+                        "in": "path",
+                        "description": "ID of the building",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrganizationResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/organizations/{organization}": {
+            "get": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Get a single organization by ID",
+                "operationId": "1b00167f032fd2b4c32006dbfdf86404",
+                "parameters": [
+                    {
+                        "name": "organization",
+                        "in": "path",
+                        "description": "ID of the organization",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrganizationResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Organization not found"
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/organizations/search": {
+            "get": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Search organizations by activity or name",
+                "operationId": "086bdeb86b862e5743aa59869be7a0f3",
+                "parameters": [
+                    {
+                        "name": "activity",
+                        "in": "query",
+                        "description": "Activity name to search for",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Organization name to search for",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrganizationResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/organizations/nearby": {
+            "get": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Get organizations nearby a given location",
+                "operationId": "bcc1c63f09151f3712c712d03b9c6fef",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude of the center point",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "lng",
+                        "in": "query",
+                        "description": "Longitude of the center point",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "radius",
+                        "in": "query",
+                        "description": "Radius in kilometers",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrganizationResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ActivityResource": {
+                "title": "Activity Resource",
+                "description": "Activity resource model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the activity",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the activity",
+                        "type": "string"
+                    },
+                    "children": {
+                        "description": "Child activities",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ActivityResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "BuildingResource": {
+                "title": "Building Resource",
+                "description": "Building resource model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the building",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the building",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "Address of the building",
+                        "type": "string"
+                    },
+                    "lat": {
+                        "description": "Latitude of the building",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "lng": {
+                        "description": "Longitude of the building",
+                        "type": "number",
+                        "format": "float"
+                    }
+                },
+                "type": "object"
+            },
+            "OrganizationPhoneResource": {
+                "title": "Organization Phone Resource",
+                "description": "Organization phone resource model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the phone number",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "phone": {
+                        "description": "Phone number",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "OrganizationResource": {
+                "title": "Organization Resource",
+                "description": "Organization resource model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the organization",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the organization",
+                        "type": "string"
+                    },
+                    "building": {
+                        "$ref": "#/components/schemas/BuildingResource"
+                    },
+                    "phones": {
+                        "description": "List of phone numbers for the organization",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrganizationPhoneResource"
+                        }
+                    },
+                    "activities": {
+                        "description": "List of activities associated with the organization",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ActivityResource"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "name": "X-API-KEY",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Activities",
+            "description": "Activities"
+        },
+        {
+            "name": "Buildings",
+            "description": "Buildings"
+        },
+        {
+            "name": "Organizations",
+            "description": "Organizations"
+        }
+    ]
+}
