@@ -14,9 +14,6 @@ class OrganizationController extends Controller
     /**
      * @OA\Get(
      *     path="/organizations/{organization}",
-     *     summary="Get a single organization by ID",
-     *     tags={"Organizations"},
-     *     security={{"ApiKeyAuth": {}}},
      *     @OA\Parameter(
      *         name="organization",
      *         in="path",
@@ -46,7 +43,6 @@ class OrganizationController extends Controller
      *     path="/organizations/search",
      *     summary="Search organizations by activity or name",
      *     tags={"Organizations"},
-     *     security={{"ApiKeyAuth": {}}},
      *     @OA\Parameter(
      *         name="activity",
      *         in="query",
@@ -76,8 +72,16 @@ class OrganizationController extends Controller
         $query = Organization::query();
 
         if ($request->has('activity')) {
-            $query->whereHas('activities', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->activity . '%');
+            $activityName = $request->activity;
+            $matchingActivities = \App\Models\Activity::where('name', 'like', '%' . $activityName . '%')->get();
+
+            $activityIds = collect();
+            foreach ($matchingActivities as $activity) {
+                $activityIds = $activityIds->merge($activity->getDescendantIds());
+            }
+
+            $query->whereHas('activities', function ($q) use ($activityIds) {
+                $q->whereIn('id', $activityIds->unique()->toArray());
             });
         }
 
@@ -93,7 +97,6 @@ class OrganizationController extends Controller
      *     path="/organizations/nearby",
      *     summary="Get organizations nearby a given location",
      *     tags={"Organizations"},
-     *     security={{"ApiKeyAuth": {}}},
      *     @OA\Parameter(
      *         name="lat",
      *         in="query",
@@ -142,7 +145,7 @@ class OrganizationController extends Controller
         $radius = $request->radius;
 
         $organizations = Organization::with('building')
-            ->select(DB::raw("*, ( 6371 * acos( cos( radians(?) ) * cos( radians( buildings.lat ) ) * cos( radians( buildings.lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( buildings.lat ) ) ) ) AS distance"))
+            ->select(DB::raw("organizations.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( buildings.lat ) ) * cos( radians( buildings.lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( buildings.lat ) ) ) ) AS distance"))
             ->join('buildings', 'organizations.building_id', '=', 'buildings.id')
             ->having("distance", "<", $radius)
             ->orderBy("distance")

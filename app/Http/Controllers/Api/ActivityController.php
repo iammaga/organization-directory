@@ -14,7 +14,6 @@ class ActivityController extends Controller
      *     path="/activities/{activity}/organizations",
      *     summary="Get organizations by activity",
      *     tags={"Activities"},
-     *     security={{"ApiKeyAuth": {}}},
      *     @OA\Parameter(
      *         name="activity",
      *         in="path",

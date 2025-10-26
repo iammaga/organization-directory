@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "http://my-default-host.com",
+            "url": "http://127.0.0.1:8000",
             "description": "Organization Directory API Server"
         }
     ],
@@ -51,20 +51,11 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ]
+                }
             }
         },
         "/buildings": {
             "get": {
-                "tags": [
-                    "Buildings"
-                ],
-                "summary": "Get all buildings",
                 "operationId": "60cc2510e686d245d04a0768d7afc247",
                 "responses": {
                     "200": {
@@ -80,12 +71,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ]
+                }
             }
         },
         "/buildings/{building}/organizations": {
@@ -120,20 +106,11 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ]
+                }
             }
         },
         "/organizations/{organization}": {
             "get": {
-                "tags": [
-                    "Organizations"
-                ],
-                "summary": "Get a single organization by ID",
                 "operationId": "1b00167f032fd2b4c32006dbfdf86404",
                 "parameters": [
                     {
@@ -160,12 +137,7 @@
                     "404": {
                         "description": "Organization not found"
                     }
-                },
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ]
+                }
             }
         },
         "/organizations/search": {
@@ -209,12 +181,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ]
+                }
             }
         },
         "/organizations/nearby": {
@@ -273,12 +240,7 @@
                     "422": {
                         "description": "Validation error"
                     }
-                },
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ]
+                }
             }
         }
     },
@@ -366,32 +328,22 @@
                         "description": "Name of the organization",
                         "type": "string"
                     },
-                    "building": {
-                        "$ref": "#/components/schemas/BuildingResource"
-                    },
                     "phones": {
                         "description": "List of phone numbers for the organization",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OrganizationPhoneResource"
+                            "type": "string"
                         }
                     },
                     "activities": {
                         "description": "List of activities associated with the organization",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/ActivityResource"
+                            "type": "string"
                         }
                     }
                 },
                 "type": "object"
-            }
-        },
-        "securitySchemes": {
-            "ApiKeyAuth": {
-                "type": "apiKey",
-                "name": "X-API-KEY",
-                "in": "header"
             }
         }
     },

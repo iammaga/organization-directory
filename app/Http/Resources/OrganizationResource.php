@@ -23,20 +23,15 @@ use OpenApi\Annotations as OA;
  *         description="Name of the organization"
  *     ),
  *     @OA\Property(
- *         property="building",
- *         ref="#/components/schemas/BuildingResource",
- *         description="Building where the organization is located"
- *     ),
- *     @OA\Property(
  *         property="phones",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/OrganizationPhoneResource"),
+ *         @OA\Items(type="string"),
  *         description="List of phone numbers for the organization"
  *     ),
  *     @OA\Property(
  *         property="activities",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/ActivityResource"),
+ *         @OA\Items(type="string"),
  *         description="List of activities associated with the organization"
  *     )
  * )
@@ -53,9 +48,12 @@ class OrganizationResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'building' => new BuildingResource($this->whenLoaded('building')),
-            'phones' => OrganizationPhoneResource::collection($this->whenLoaded('phones')),
-            'activities' => ActivityResource::collection($this->whenLoaded('activities')),
+            'phones' => $this->whenLoaded('phones', function () {
+                return $this->phones->pluck('phone');
+            }),
+            'activities' => $this->whenLoaded('activities', function () {
+                return $this->activities->pluck('name');
+            }),
         ];
     }
 }

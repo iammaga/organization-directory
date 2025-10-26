@@ -27,21 +27,12 @@ use OpenApi\Annotations as OA;
  *      description="Organization Directory API Server"
  * )
  *
- * @OA\SecurityScheme(
- *     type="apiKey",
- *     in="header",
- *     name="X-API-KEY",
- *     securityScheme="ApiKeyAuth"
- * )
  */
 class BuildingController extends Controller
 {
     /**
      * @OA\Get(
      *     path="/buildings",
-     *     summary="Get all buildings",
-     *     tags={"Buildings"},
-     *     security={{"ApiKeyAuth": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -62,7 +53,6 @@ class BuildingController extends Controller
      *     path="/buildings/{building}/organizations",
      *     summary="Get organizations by building",
      *     tags={"Buildings"},
-     *     security={{"ApiKeyAuth": {}}},
      *     @OA\Parameter(
      *         name="building",
      *         in="path",

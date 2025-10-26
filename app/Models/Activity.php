@@ -31,4 +31,24 @@ class Activity extends Model
     {
         return $this->belongsToMany(Organization::class);
     }
+
+    /**
+     * Get all descendant activity IDs for the current activity.
+     *
+     * @param int $maxDepth The maximum depth to search for descendants.
+     * @param int $currentDepth The current depth in the recursion.
+     * @return array
+     */
+    public function getDescendantIds(int $maxDepth = 3, int $currentDepth = 0): array
+    {
+        $descendantIds = [$this->id];
+
+        if ($currentDepth < $maxDepth) {
+            foreach ($this->children as $child) {
+                $descendantIds = array_merge($descendantIds, $child->getDescendantIds($maxDepth, $currentDepth + 1));
+            }
+        }
+
+        return array_unique($descendantIds);
+    }
 }
