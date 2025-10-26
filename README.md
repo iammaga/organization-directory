@@ -11,26 +11,24 @@ This is a Laravel 12 REST API project for managing organizations, buildings, and
   - Organization belongsToMany Activity
   - Activity hasMany children (self-referencing, max 3 levels)
   - Building hasMany Organization
-- Migrations and Seeders with test data
+- Migrations and Seeders with consistent test data
 - API Routes:
-  - `GET /api/buildings`
-  - `GET /api/organizations/{id}`
-  - `GET /api/buildings/{id}/organizations`
-  - `GET /api/activities/{id}/organizations`
-  - `GET /api/organizations/search?activity=еда`
-  - `GET /api/organizations/search?name=копыта`
-  - `GET /api/organizations/nearby?lat=55.7558&lng=37.6173&radius=5`
-- Middleware: X-API-KEY authentication
+  - `GET /api/buildings` - Get a list of all buildings.
+  - `GET /api/organizations/{id}` - Get details for a specific organization.
+  - `GET /api/buildings/{id}/organizations` - Get organizations for a specific building.
+  - `GET /api/activities/{id}/organizations` - Get organizations associated with a specific activity.
+  - `GET /api/organizations/search?activity={activity_name}` - Search organizations by activity name.
+  - `GET /api/organizations/search?name={organization_name}` - Search organizations by organization name.
+  - `GET /api/organizations/nearby?lat={latitude}&lng={longitude}&radius={radius_in_km}` - Get organizations nearby a given location.
 - JSON responses using Resource classes
 - Swagger documentation via L5-Swagger
-- Docker environment (nginx, php-fpm 8.3, mysql)
 
 ## Setup and Installation
 
 1.  **Clone the repository:**
 
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/iammaga/organization-directory.git
     cd OrganizationDirectory
     ```
 
@@ -47,53 +45,184 @@ This is a Laravel 12 REST API project for managing organizations, buildings, and
     php artisan key:generate
     ```
 
-4.  **Update `.env` file:**
+4.  **Update `.env` file for local MySQL:**
 
-    -   Set `DB_CONNECTION=mysql`
-    -   Set `DB_HOST=mysql`
-    -   Set `DB_PORT=3306`
-    -   Set `DB_DATABASE=laravel` (or your preferred database name)
-    -   Set `DB_USERNAME=sail` (or your preferred username)
-    -   Set `DB_PASSWORD=password` (or your preferred password)
-    -   Add `API_KEY=your_secret_api_key` (replace `your_secret_api_key` with a strong, random key)
+    -   Ensure your local MySQL server is running.
+    -   Create a database named `laravel` (or your preferred name) in your MySQL server.
+    -   Ensure you have a MySQL user with appropriate permissions (e.g., `root` with password `root` if configured that way).
+    -   Set the following in your `.env` file:
+        ```
+        DB_CONNECTION=mysql
+        DB_HOST=127.0.0.1
+        DB_PORT=8889 # Or your MySQL port
+        DB_DATABASE=laravel
+        DB_USERNAME=root # Or your MySQL username
+        DB_PASSWORD=root # Or your MySQL password
+        ```
 
-5.  **Build and start Docker containers:**
+5.  **Run migrations and seed the database:**
 
     ```bash
-    docker compose up -d --build
+    php artisan migrate:fresh --seed
     ```
 
-6.  **Run migrations and seed the database:**
+6.  **Generate Swagger documentation:**
 
     ```bash
-    ./vendor/bin/sail artisan migrate --seed
+    php artisan l5-swagger:generate
     ```
 
-7.  **Generate Swagger documentation:**
+7.  **Start the development server:**
 
     ```bash
-    ./vendor/bin/sail artisan l5-swagger:generate
+    php artisan serve
     ```
 
 ## API Usage
 
-The API is accessible at `http://localhost/api`.
-
-**Authentication:**
-All API routes require an `X-API-KEY` header with the secret key configured in your `.env` file.
+The API is accessible at `http://127.0.0.1:8000/api` (assuming default `php artisan serve` port).
 
 **Example Request (using curl):**
 
 ```bash
-curl -H "X-API-KEY: your_secret_api_key" http://localhost/api/buildings
+curl http://127.0.0.1:8000/api/organizations/1
 ```
 
 ## Swagger Documentation
 
-Access the API documentation at `http://localhost/api/documentation`.
+Access the API documentation at `http://127.0.0.1:8000/api/documentation`.
 
-## Stopping Docker Containers
+## Example API Responses
 
-```bash
-docker compose down
+Here are examples of what you might get from the API endpoints:
+
+**GET /api/organizations/1**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Krajcik, Emard and Robel",
+    "phones": [
+      "+15205835371",
+      "1-508-793-4976"
+    ],
+    "activities": [
+      "debitis",
+      "non",
+      "dolores",
+      "ipsa"
+    ]
+  }
+}
+```
+
+**GET /api/buildings**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Gerhold and Sons",
+      "address": "42913 Kathlyn Tunnel\nNew Haydenville, AL 83596-4529",
+      "lat": "55.7512450",
+      "lng": "37.6184240"
+    },
+    {
+      "id": 2,
+      "name": "Willms-Schroeder",
+      "address": "525 Steuber Manors Suite 698\nCreminfurt, LA 49306",
+      "lat": "-82.7104850",
+      "lng": "6.2208990"
+    }
+    // ... more buildings
+  ]
+}
+```
+
+**GET /api/buildings/1/organizations**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Krajcik, Emard and Robel"
+    },
+    {
+      "id": 2,
+      "name": "Windler, Reilly and Nienow"
+    }
+    // ... more organizations in building 1
+  ]
+}
+```
+
+**GET /api/activities/1/organizations**
+```json
+{
+  "data": [
+    {
+      "id": 4,
+      "name": "Gerhold, Stehr and Harris"
+    },
+    {
+      "id": 8,
+      "name": "Hintz-Abernathy"
+    }
+    // ... more organizations for activity 1
+  ]
+}
+```
+
+**GET /api/organizations/search?name=LLC**
+```json
+{
+  "data": [
+    {
+      "id": 3,
+      "name": "Borer LLC"
+    },
+    {
+      "id": 12,
+      "name": "Hoeger LLC"
+    }
+    // ... more organizations with 'LLC' in name
+  ]
+}
+```
+
+**GET /api/organizations/nearby?lat=55.751244&lng=37.618423&radius=1**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Krajcik, Emard and Robel",
+      "phones": [
+        "+15205835371",
+        "1-508-793-4976"
+      ],
+      "activities": [
+        "debitis",
+        "non",
+        "dolores",
+        "ipsa"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Windler, Reilly and Nienow",
+      "phones": [
+        "1-508-793-4976",
+        "+15205835371"
+      ],
+      "activities": [
+        "debitis",
+        "non",
+        "dolores",
+        "ipsa"
+      ]
+    }
+    // ... more nearby organizations
+  ]
+}
 ```
